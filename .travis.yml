@@ -4,8 +4,11 @@ python:
 # command to install dependencies
 # all needed
 install:
-  - pip install beautifulsoup4
+  - pip install beautifulsoup4==4.7.1
+  - pip install requests==2.21.0
+  - pip install gunicorn==19.9.0
   
 # command to run tests 
 script:
+  - python -m unittest
   - python src/Main/main.py
