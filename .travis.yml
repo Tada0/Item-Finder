@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.6"
+# command to install dependencies
+# all needed
+install:
+  - pip install pip install beautifulsoup4
+  
+# command to run tests 
+script:
+  - python src/Main/main.py
