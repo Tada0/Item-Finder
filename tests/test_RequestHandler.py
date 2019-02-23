@@ -1,9 +1,9 @@
 from src.Requests.RequestHandler import RequestHandler
 import requests
-import unittest
+from unittest import TestCase
 
 
-class TestRequestHandler(unittest.TestCase):
+class TestRequestHandler(TestCase):
 
     def test_url_wrong(self):
         #  When url is wrong
