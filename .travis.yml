@@ -4,7 +4,7 @@ python:
 # command to install dependencies
 # all needed
 install:
-  - pip install pip install beautifulsoup4
+  - pip install beautifulsoup4
   
 # command to run tests 
 script:
