@@ -1,11 +1,14 @@
+from src.Requests.RequestHandler import RequestHandler
+from src.DP.DictHandler import DictHandler
+import requests
 
 
 class OlxScrapper:
 
     @staticmethod
-    def __get_products(self, product: str):
+    def get_products(product: str, city_id: str = '', region_id: str = '', dist_id: int = 0, dist: str = ''):
 
-        request_cookies = {
+        request_cookies = DictHandler({
             'dfp_segment_test_v3': '94',
             'dfp_segment_test': '76',
             'dfp_segment_test_v4': '59',
@@ -62,31 +65,35 @@ class OlxScrapper:
             'bm_sv': 'B89AEDB91A54973D3021D004187FEAEF~VqxBhQMxoymZQ2pz+v4dr7vgSxmusPVXKHg6FLjZ2BrjZDfWWAtD1ZMpDeSwErO1'
                      'zQ5MtXV+NzUmUm2b9Lj27a5uI61XHkPmeT5ye6bn72jloibKk4EZgvkJV4kpSxjClmgvnTj/5wHTzPFNQtt9fOOlOMl+EONtJ'
                      'ixRxs71Uts=',
-        }
+        })
 
-        request_headers = {
+        request_headers = DictHandler({
             'authority': 'www.olx.pl',
-            'method': 'POST',
-            'path': '/oferty/',
+            'method': 'GET',
+            'path': str('/oferty/q-' + product + '/').replace(' ', '-'),
             'scheme': 'https',
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'accept-encoding': 'gzip, deflate, br',
             'accept-language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
             'cache-control': 'max-age=0',
-            'content-length': '102',
-            'content type': 'application/x-www-form-urlencoded',
-            'cookie': ''.join(f'{k}={v}; ' for k, v in request_cookies.items()),
-            'origin': 'https://www.olx.pl',
-            'referer': 'https://www.ogx.pl/',
+            'cookie': '; '.join(f'{k}={v}' for k, v in request_cookies.get_dict().items()),
+            'referer': 'https://www.olx.pl/',
             'upgrade-insecure-requests': '1',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                           'Chrome/72.0.3626.109 Safari/537.36'
-        }
+        })
 
-        request_data = {
+        data = DictHandler({
             'q': product,
-            'search[city_id]': '',
-            'search[region_id]': '',
-            'search[district_id]': 0,
-            'search[dist]': ''
-        }
+            'search[city_id]': city_id,
+            'search[region_id]': region_id,
+            'search[district_id]': dist_id,
+            'search[dist]': dist
+        })
+
+        request_url = str('https://www.olx.pl/oferty/q-' + product + '/').replace(' ', '-')
+
+        response = RequestHandler.request(request_url, 'GET', headers=request_headers.get_dict(), cookies=request_cookies.get_dict(), data=data.get_dict())
+        if type(response) != requests.models.Response or response.status_code != 200:
+            print(response)
+            return None
