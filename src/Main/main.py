@@ -1,4 +1,4 @@
-from src.WebsiteHandlers.OlxHandler import OlxScrapper
+from src.WebsitesScrappers import OlxScrapper
 
 if __name__ == "__main__":
-    OlxScrapper.get_products('Philips 240v')
+    OlxScrapper.OlxScrapper.get_products('Philips 240v')
