@@ -1,12 +1,14 @@
 from src.Requests.RequestHandler import RequestHandler
 from src.DP.DictHandler import DictHandler
+from bs4 import BeautifulSoup
 import requests
+import re
 
 
 class OlxScrapper:
 
     @staticmethod
-    def get_products(product: str, city_id: str = '', region_id: str = '', dist_id: int = 0, dist: str = ''):
+    def __get_first_page(product: str, city_id: str, region_id: str, dist_id: int, dist: str):
 
         request_cookies = DictHandler({
             'dfp_segment_test_v3': '94',
@@ -66,7 +68,6 @@ class OlxScrapper:
                      'zQ5MtXV+NzUmUm2b9Lj27a5uI61XHkPmeT5ye6bn72jloibKk4EZgvkJV4kpSxjClmgvnTj/5wHTzPFNQtt9fOOlOMl+EONtJ'
                      'ixRxs71Uts=',
         })
-
         request_headers = DictHandler({
             'authority': 'www.olx.pl',
             'method': 'GET',
@@ -82,7 +83,6 @@ class OlxScrapper:
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                           'Chrome/72.0.3626.109 Safari/537.36'
         })
-
         data = DictHandler({
             'q': product,
             'search[city_id]': city_id,
@@ -92,8 +92,41 @@ class OlxScrapper:
         })
 
         request_url = str('https://www.olx.pl/oferty/q-' + product + '/').replace(' ', '-')
+        response = RequestHandler.request(request_url, 'GET',
+                                          headers=request_headers.get_dict(),
+                                          cookies=request_cookies.get_dict(),
+                                          data=data.get_dict())
 
-        response = RequestHandler.request(request_url, 'GET', headers=request_headers.get_dict(), cookies=request_cookies.get_dict(), data=data.get_dict())
         if type(response) != requests.models.Response or response.status_code != 200:
-            print(response)
             return None
+
+        return response
+
+    @staticmethod
+    def __get_total_pages_number(first_page_source: str):
+        soup = BeautifulSoup(first_page_source, 'html.parser')
+        page_picker = soup.find('div', {'class': 'pager rel clr'})
+
+        if page_picker:
+            fieldset = page_picker.find('fieldset', {'class': 'fleft'})
+            total_pages_raw = str(fieldset.find('input', {'type': 'submit', 'value': 'OK'})['class'])
+            return int(re.search(r'\d+', total_pages_raw).group(0))
+
+        return 1
+
+    @staticmethod
+    def __get_products_from_page(self, page: str):
+        pass
+
+    @staticmethod
+    def __get_all_products(first_page: str, additional_pages: int):
+        pass
+
+    @staticmethod
+    def get_products(product: str, city_id: str = '', region_id: str = '', dist_id: int = 0, dist: str = ''):
+        first_page = OlxScrapper.__get_first_page(product, city_id, region_id, dist_id, dist)
+        total_pages = OlxScrapper.__get_total_pages_number(first_page.text)
+        products_list = OlxScrapper.__get_all_products(first_page.text, total_pages)
+
+
+
