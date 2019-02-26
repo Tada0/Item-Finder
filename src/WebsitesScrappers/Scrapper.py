@@ -24,5 +24,5 @@ class Scrapper:
         pass
 
     @staticmethod
-    def get_product(product: str):
+    def get_product_offers(product: str):
         pass

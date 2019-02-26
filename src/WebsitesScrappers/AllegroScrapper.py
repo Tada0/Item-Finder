@@ -1,6 +1,5 @@
 from src.Requests.RequestHandler import RequestHandler
 from src.WebsitesScrappers.Scrapper import Scrapper
-from src.DP.DictHandler import DictHandler
 from src.DP.Product import Product
 from bs4 import BeautifulSoup
 import requests
@@ -57,7 +56,7 @@ class AllegroScrapper(Scrapper):
         return tuple(AllegroScrapper.__get_products_from_page(page) for page in pages)
 
     @staticmethod
-    def get_product(product: str):
+    def get_product_offers(product: str):
 
         first_page = AllegroScrapper.__get_page(product, 1)
         additional_pages = AllegroScrapper.__get_additional_pages_number(first_page)
