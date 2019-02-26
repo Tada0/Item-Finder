@@ -1,4 +1,5 @@
 from src.Requests.RequestHandler import RequestHandler
+from src.WebsitesScrappers.Scrapper import Scrapper
 from src.DP.DictHandler import DictHandler
 from src.DP.Product import Product
 from bs4 import BeautifulSoup
@@ -6,13 +7,13 @@ import requests
 import re
 
 
-class OlxScrapper:
+class OlxScrapper(Scrapper):
 
     @staticmethod
     def __get_page(product: str, page_nr: int):
 
         request_url = str('https://www.olx.pl/oferty/q-' + product + '/').replace(' ', '-') if page_nr == 1 else \
-            str('https://www.olx.pl/oferty/q-' + product + '/?page=' + str(page_nr)).replace(' ', '-')
+                      str('https://www.olx.pl/oferty/q-' + product + '/?page=' + str(page_nr)).replace(' ', '-')
         data = {'q': product} if page_nr == 1 else {'q': product, 'page': page_nr}
 
         response = RequestHandler.request(request_url, 'GET', data=data)
@@ -22,9 +23,9 @@ class OlxScrapper:
         return response
 
     @staticmethod
-    def __get_additional_pages_number(first_page_source: str):
+    def __get_additional_pages_number(first_page: requests.models.Response):
 
-        soup = BeautifulSoup(first_page_source, 'html.parser')
+        soup = BeautifulSoup(first_page.text, 'html.parser')
         page_picker = soup.find('div', {'class': 'pager rel clr'})
 
         if page_picker:
@@ -43,16 +44,16 @@ class OlxScrapper:
         return Product(item_name, item_url, item_price)
 
     @staticmethod
-    def __get_products_from_page(page_source: str):
+    def __get_products_from_page(page_source: requests.models.Response):
 
-        soup = BeautifulSoup(page_source, 'html.parser')
+        soup = BeautifulSoup(page_source.text, 'html.parser')
         items_table = soup.find('tbody')
         items = items_table.find_all('tr', {'class': 'wrap'})
         items = [(i.find('h3', {'class': 'lheight22 margintop5'}), i.find('p', {'class': 'price'})) for i in items]
         return tuple(OlxScrapper.__get_item(item) for item in items)
 
     @staticmethod
-    def __get_all_products(product: str, first_page: str, pages: int):
+    def __get_all_products(product: str, first_page: requests.models.Response, pages: int):
 
         pages = (first_page,) + tuple(OlxScrapper.__get_page(product, x) for x in range(2, pages + 1) if pages >= 2)
         return tuple(OlxScrapper.__get_products_from_page(page) for page in pages)
@@ -61,6 +62,6 @@ class OlxScrapper:
     def get_product(product: str):
 
         first_page = OlxScrapper.__get_page(product, 1)
-        additional_pages = OlxScrapper.__get_additional_pages_number(first_page.text)
-        products_list_raw = OlxScrapper.__get_all_products(product, first_page.text, additional_pages)
-        products = tuple([item for page in products_list_raw for item in page])
+        additional_pages = OlxScrapper.__get_additional_pages_number(first_page)
+        products_list_raw = OlxScrapper.__get_all_products(product, first_page, additional_pages)
+        return tuple([item for page in products_list_raw for item in page])
