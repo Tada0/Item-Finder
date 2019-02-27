@@ -14,3 +14,6 @@ class Product:
 
     def get_price(self):
         return self.__price
+
+    def __str__(self):
+        return self.__url
