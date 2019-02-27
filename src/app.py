@@ -12,10 +12,10 @@ if __name__ == "__main__":
         def get_products(p): return OlxScrapper.get_product_offers(p) + AllegroScrapper.get_product_offers(p)
     
         all_products = [item for p in tuple(map(get_products, UserOptions().get_products_list())) for item in p]
-        new_products = FileHandler.check_with_existing_products('../Resources/aul.txt', all_products)
+        new_products = FileHandler.check_with_existing_products('Resources/aul.txt', all_products)
 
-        FileHandler.add_new_products('../Resources/aul.txt', new_products)
-        FileHandler.delete_old_products('../Resources/aul.txt', 30)
+        FileHandler.add_new_products('Resources/aul.txt', new_products)
+        FileHandler.delete_old_products('Resources/aul.txt', 30)
 
         MailHandler.send_mail(new_products, UserOptions().get_user_mail())
 
