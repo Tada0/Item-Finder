@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
         def get_products(p): return OlxScrapper.get_product_offers(p) + AllegroScrapper.get_product_offers(p)
 
-        print('Looking for some products...')
+        print('Looking for New Products...')
         all_products = [item for p in tuple(map(get_products, UserOptions().get_products_list())) for item in p]
         new_products = FileHandler.check_with_existing_products('Resources/aul.txt', all_products)
         print('Found Some New Products') if new_products else print('Nothing New Found')
