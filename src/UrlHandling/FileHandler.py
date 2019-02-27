@@ -13,12 +13,6 @@ class FileHandler:
         return lines
 
     @staticmethod
-    def append_to_file(filename, info):
-        file = open(filename, 'a+', encoding='utf-8')
-        file.write('\n' + info)
-        file.close()
-
-    @staticmethod
     def add_new_products(filename, products):
         file = open(filename, 'a+', encoding='utf-8')
         for product in products:
@@ -27,17 +21,17 @@ class FileHandler:
 
     @staticmethod
     def check_with_existing_products(filename, products):
-        new_products = [str(product) for product in products if product is not None]
+        new_products_str = [str(product) for product in products if product is not None]
         existing_products = [url[9:] for url in FileHandler.read_to_list(filename)]
 
         for existing_product in existing_products:
-            if existing_product in new_products:
-                new_products.remove(existing_product)
+            if existing_product in new_products_str:
+                new_products_str.remove(existing_product)
 
-        return new_products
+        return [product for product in products if str(product) in new_products_str]
 
     @staticmethod
-    def clean_url_holder(filename, limit):
+    def delete_old_products(filename, limit):
         urls = [url for url in FileHandler.read_to_list(filename) if url]
         valid_urls = [url for url in urls if (date.today() - datetime.strptime(url[:8], "%Y%m%d").date()).days < limit]
         file = open(filename, 'w', encoding='utf-8')
