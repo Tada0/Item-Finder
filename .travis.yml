@@ -5,7 +5,7 @@ python:
 # all needed
 install:
   - pip install beautifulsoup4==4.7.1
-  - pip install  requests==2.21.0
+  - pip install requests==2.21.0
   - pip install gunicorn==19.9.0
 
 script:
