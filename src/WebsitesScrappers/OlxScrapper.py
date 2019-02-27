@@ -36,7 +36,6 @@ class OlxScrapper(Scrapper):
 
     @staticmethod
     def __get_item(raw_item: tuple):
-
         item_name = re.search(r'<strong>(.*?)</strong>', str(raw_item[0])).group(1)
         item_url = re.search(r'href="(.*?)">', str(raw_item[0])).group(1)
         item_price = int(re.search(r'\d+', str(raw_item[1])).group(0))

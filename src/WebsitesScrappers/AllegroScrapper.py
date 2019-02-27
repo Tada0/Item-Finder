@@ -39,7 +39,7 @@ class AllegroScrapper(Scrapper):
         item_name = re.search(r'title="">(.*?)</a></h2>', str(raw_item[0])).group(1)
         item_url = re.search(r'<a href="(.*?)" title="">', str(raw_item[0])).group(1)
         item_price = int(re.search(r'<span class="fee8042">(.*?)<span>', str(raw_item[1])).group(1))
-        return Product(item_name, item_url, item_price)
+        return Product(item_name, item_url, item_price) if 'rel="nofollow"' not in str(raw_item[0]) else None
 
     @staticmethod
     def __get_products_from_page(page_source: requests.models.Response):
