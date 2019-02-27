@@ -40,4 +40,5 @@ class MailHandler:
         s.ehlo()
         s.login(MailHandler.conf['username'], MailHandler.conf['password'])
         s.sendmail(headers['From'], email, msg.encode("utf8"))
+        print('Mail With New Products Sent')
         s.quit()

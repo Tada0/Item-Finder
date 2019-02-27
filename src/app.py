@@ -20,7 +20,6 @@ if __name__ == "__main__":
         FileHandler.delete_old_products('Resources/aul.txt', 30)
 
         MailHandler.send_mail(new_products, UserOptions().get_user_mail())
-        print('Mail With New Products Sent')
 
     while True:
         check_for_new_products()
