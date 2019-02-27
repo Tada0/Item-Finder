@@ -11,4 +11,4 @@ install:
 # command to run tests 
 script:
   - python -m unittest tests.test_RequestHandler
-  - python src/Main/main.py
+  - python src/main.py
